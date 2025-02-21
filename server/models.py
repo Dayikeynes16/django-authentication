@@ -1,17 +1,18 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+class Type_person(models.Model):
+    rol = models.CharField(max_length=15)
+    
+    def __str__(self):
+        return self.rol 
+
 class CustomUser(AbstractUser):
     SEXO_CHOICES = [
         (1, 'Hombre'),
         (2, 'Mujer'),
     ]
     
-    ROLE_CHOICES = [
-        ('admin', 'Administrador'),
-        ('chofer', 'Chofer'),
-        ('cliente', 'Cliente'),
-    ]
 
     fecha_nacimiento = models.DateField(
         null=True, 
@@ -54,6 +55,13 @@ class CustomUser(AbstractUser):
         blank=True,
         verbose_name="RFC"
     )
+
+    type = models.ForeignKey(
+        Type_person,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     
     curp = models.CharField(
         max_length=18,
@@ -62,13 +70,7 @@ class CustomUser(AbstractUser):
         blank=True,
         verbose_name="CURP"
     )
-    
-    role = models.CharField(
-        max_length=10,
-        choices=ROLE_CHOICES,
-        default='cliente',
-        verbose_name="Rol"
-    )
+       
     nombre = models.CharField(
         max_length=50,  
         null=False,
@@ -76,9 +78,8 @@ class CustomUser(AbstractUser):
         verbose_name="Nombre"
     )
 
-
     def __str__(self):
-        return f" {self.nombre} {self.username} {self.apellido_paterno} ({self.get_role_display()})"
+        return f"{self.nombre} {self.username} {self.apellido_paterno} ({self.get_role_display()})"
 
     class Meta:
         verbose_name = "Usuario"

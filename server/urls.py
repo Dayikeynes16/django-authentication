@@ -17,13 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from . import views
+from .views import SaveRolesView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('register', views.register),
     re_path('login', views.login),
     re_path('profile', views.profile),
-    re_path('update_user', views.update_user)
+    # re_path('update_user', views.update_user),
+    path('roles/', SaveRolesView.as_view(), name='save-roles'),
 
 
 ]
