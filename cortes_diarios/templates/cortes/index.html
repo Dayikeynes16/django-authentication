@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Importar CSS de Vuetify -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@3.4.2/dist/vuetify.min.css" rel="stylesheet">
+    <!-- Importar Material Design Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <!-- Importar fuente Roboto -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <!-- Meta etiquetas -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integración Vue 3 y Vuetify 3</title>
+</head>
+<body>
+    <!-- Contenedor de la aplicación Vue -->
+    <div id="app">
+        <!-- Componente principal de Vuetify -->
+        <v-app>
+            <v-container>
+                <v-card class="mx-auto" max-width="400">
+                    <v-card-title>Hola</v-card-title>
+                    <v-card-text>{{ message }}</v-card-text>
+                    <v-card-actions>
+                        <v-btn color="primary" @click="abdc(a.b)">
+                            Botoncito {{ a.a }}
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-container>
+        </v-app>
+    </div>
+
+    <!-- Importar Vue 3 -->
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <!-- Importar Vuetify 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.2/dist/vuetify.min.js"></script>
+    <!-- Script de inicialización -->
+    <script>
+        // Crear la instancia de Vuetify
+        const vuetify = Vuetify.createVuetify();
+
+        // Crear la aplicación Vue
+        const app = Vue.createApp({
+            data() {
+                return {
+                    message: '30233',
+                    a: {
+                        a: 1,
+                        b: 'hdns s s'
+                    }
+                };
+            },
+            methods: {
+                abdc(param) {
+                    alert(this.message);
+                    console.log("Valor de a.b:", param);
+                }
+            }
+        });
+
+        // Usar Vuetify en la aplicación Vue
+        app.use(vuetify);
+        // Montar la aplicación en el elemento con id "app"
+        app.mount('#app');
+    </script>
+</body>
+</html>
