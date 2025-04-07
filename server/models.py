@@ -10,7 +10,7 @@ class Role(models.Model):
         return self.name
 
 class User(AbstractUser):
-    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, default=1)
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15, null=True, blank=True)
     

@@ -26,8 +26,10 @@ SECRET_KEY = 'django-insecure-1#_5w63-a(&k-@8m3zru(7@tte3!j&+z$vv_j#040i+8zmrb$u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Puerto de tu frontend Vue
+    "http://localhost:5173",  # Puerto de tu frontend Vue
+]
 
 # Application definition
 
@@ -43,18 +45,25 @@ INSTALLED_APPS = [
     'corsheaders',
     'server',
     'to_do',
-    'cortes_diarios'
+    'cortes_diarios',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'productos'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Debe ir antes de CommonMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsMiddleware', 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Permite peticiones desde tu frontend Vue
+    "http://localhost:3000",  # Permite peticiones desde tu frontend Vue
 ]
 
 ROOT_URLCONF = 'server.urls'
@@ -96,6 +105,24 @@ WSGI_APPLICATION = 'server.wsgi.application'
 #     }
 # }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Reemplaza TokenAuthentication
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny'
+    ),
+}
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # El token expira en 15 minutos
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # El refresh token dura 7 días
+    'ROTATE_REFRESH_TOKENS': True,  # Cada vez que se use el refresh token, se genera uno nuevo
+    'BLACKLIST_AFTER_ROTATION': True,  # El viejo refresh token se invalida después de rotación
+    'AUTH_HEADER_TYPES': ('Bearer',),  # El frontend debe enviar "Authorization: Bearer <token>"
+}
 import os
 from pathlib import Path
 
@@ -130,7 +157,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-mx'
 
 TIME_ZONE = 'UTC'
 
@@ -143,6 +170,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
 
 AUTH_USER_MODEL = 'server.User'
 

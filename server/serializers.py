@@ -9,11 +9,10 @@ class roleSerializer(serializers.ModelSerializer):
             'name': {'required': True},
             'permissions': {'required': False}
         }
-
+        
     def validate(self, data):
         if not data.get('name'):
             raise serializers.ValidationError({'name': 'El nombre del rol es requerido'})
-        
         return data
     
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -37,9 +36,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['role', 'full_name', 'phone', 'employee_id', 'rfc', 'curp', 'hire_date', 'username', 'password']
+        fields = ['email','role', 'full_name', 'phone', 'employee_id', 'rfc', 'curp', 'hire_date', 'username', 'password']
         extra_kwargs = {
-            'role': {'required': True},
+            'role': {'required': False},
             'full_name': {'required': True},
             'phone': {'required': False},
             'employee_id': {'required': False},
@@ -47,13 +46,20 @@ class UserSerializer(serializers.ModelSerializer):
             'curp': {'required': False},
             'hire_date': {'required': False},
             'username': {'required': True},
-            'password': {'required': True}
+            'password': {'required': True},
+            'email': {'required': True}
         }           
     def validate(self, data):
-        if not data.get('role'):
-            raise serializers.ValidationError({'role': 'El rol es requerido'})
-        
+        if not data.get('full_name'):
+            raise serializers.ValidationError({'full_name': 'El nombre completo es requerido'})
+        if not data.get('username'):
+            raise serializers.ValidationError({'username': 'El nombre de usuario es requerido'})
+        if not data.get('password'):
+            raise serializers.ValidationError({'password': 'La contraseña es requerida'})
+        if not data.get('email'):
+            raise serializers.ValidationError({'email': 'El correo electrónico es requerido'})
         return data
+    
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         user.set_password(validated_data['password'])

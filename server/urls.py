@@ -17,14 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from . import views
+from django.shortcuts import render
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
+    path('login/', TokenObtainPairView.as_view(), name='access_token'),  # Endpoint para obtener tokens
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    path('', views.index),
+    path('users/', views.UserIformation.as_view(), name='users'),
     path('admin/', admin.site.urls),
     path('cortes/', include('cortes_diarios.urls')),
     path('todo/', include('to_do.urls')), 
     path('roles/', views.SaveRolesView.as_view(), name='save-roles'),
     path('register/', views.SaveUserView.as_view(), name='register'),
-    path('login/', views.Login.as_view(), name='login'),
     path('logout/', views.Logout.as_view(), name='logout'),
     path('update_user/<int:pk>/', views.UpdateUser.as_view(), name='update_user')
 ]
