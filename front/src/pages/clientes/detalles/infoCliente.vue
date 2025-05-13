@@ -1,15 +1,13 @@
 <template>
     <v-container>
-        <v-card variant="outlined">
+        <v-card elevation="4" variant="flat">
             <v-row>
                 <v-col cols="8">
                   <v-card-title>
                     Información del cliente 
                   </v-card-title>
                 </v-col>
-               
             </v-row>
-          
             <v-card-text>
                 <v-row>
                     <v-col cols="12" md="6">
@@ -19,13 +17,9 @@
                         <p><strong>Direccion:</strong> {{ cliente.direccion }}</p>
                     </v-col>
                     <v-col cols="12" md="6">
-                      
                     </v-col>
                 </v-row>
             </v-card-text>
-       
-            
-    
         </v-card>
 
     </v-container>

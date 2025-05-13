@@ -11,6 +11,8 @@ import ventasBusqueda from './pages/ventas/ventasBusqueda.vue'
 import insertarVenta from './pages/ventas/insertarVenta.vue'
 import clientes from './pages/clientes/clientes.vue'
 import clientesDetalles from './pages/clientes/clientesDetalles.vue'
+import ventaEspecifica from './pages/ventaEspecifica/ventaEspecificaFinal.vue'
+
 
 const routes = [
   { path: '/', redirect: '/ventas' },  // Redirigir a /inicio por defecto
@@ -22,6 +24,8 @@ const routes = [
   { path: '/totalVentas', component: ventasBusqueda, meta: { requiresAuth: true }}, 
   { path: '/insertarVenta', component: insertarVenta, meta: { requiresAuth: true }},
   { path: '/clientesDetalles/:id', name: 'clientesDetalles' ,component: clientesDetalles, meta: { requiresAuth: true }}, // Ruta protegida
+  { path: '/ventaEspecifica/:id', name: 'ventaEspecifica' ,component: ventaEspecifica, meta: { requiresAuth: true }}, // Ruta protegida
+
 
 ]
 

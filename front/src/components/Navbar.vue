@@ -15,7 +15,6 @@
     <v-btn variant="outlined" @click="router.push('/ventas')" class="mx-2"> Ventas</v-btn>
     <v-btn variant="outlined" @click="router.push('/totalVentas')" class="mx-2">Registro diario</v-btn>
     <v-btn variant="outlined" @click="router.push('/insertarVenta')" class="mx-2">Vender</v-btn>
-    <v-btn color="black" variant="outlined" v-if="isAuthenticated" @click="logout">Cerrar Sesión</v-btn>
   </v-app-bar>
 </template>
 

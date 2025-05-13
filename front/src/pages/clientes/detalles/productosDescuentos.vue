@@ -35,6 +35,7 @@ const props = defineProps({
 const productos = computed(() => props.productos)
 const productosDescuentos = ref([])
 
+
 console.log(productos.value);
 
 

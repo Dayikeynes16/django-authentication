@@ -1,30 +1,43 @@
 <template>
     <v-container>
         <v-row>
-            <v-col cols="6">
+            <v-col cols="4">
                 <infoCliente :cliente="client">
                 </infoCliente>
               
             </v-col>
-            <v-col cols="6">
-                <productosDescuentos :productos="client.precio_especials">
-
-                </productosDescuentos>
-                
-                
+              <v-col cols="8">
+                <v-container>
+                    <v-card variant="outlined" class="pa-5">
+                        <v-card-title>
+                            Ultimas ventas
+                        </v-card-title>
+                        <v-card-text >
+                            <ultimasVentas :id="client.id"></ultimasVentas>
+                        </v-card-text>
+                    </v-card>
+                </v-container>
             </v-col>
+            
         </v-row>
         <v-row>
-            <v-col cols="12">
-                <v-card variant="outlined" class="pa-5">
-                    <v-card-title>
-                        Ultimas ventas
-                    </v-card-title>
-                    <v-card-text>
-                        <ultimasVentas :id="client.id"></ultimasVentas>
-                    </v-card-text>
-                </v-card>
+            <v-col cols="8">
+                <productosDescuentos v-if="descuentos === true"  :productos="client.precio_especials">
+                </productosDescuentos>
+                    <div v-else>
+                        <v-container>
+                            <v-card variant="outlined" class="pa-5">
+                                <v-card-title>
+                                    Productos con descuento
+                                </v-card-title>
+                                <v-card-text>
+                                    Este cliente no cuenta productos con descuento
+                                </v-card-text>
+                            </v-card>
+                        </v-container>
+                    </div>
             </v-col>
+          
         </v-row>
 
     </v-container>
@@ -43,6 +56,8 @@ import formatCurrency from '@/composables/formatCurrency';
 
 const client = ref({})
 
+const descuentos = ref(false)
+
 const get_clients = async (id) => {
     try {
         const { data, error } = await supabase
@@ -59,12 +74,19 @@ const get_clients = async (id) => {
             )
             .eq('id', id)
             .single()
+            
+
 
         if (error) {
             console.log(error)
         } else {
             client.value = data
-
+            if(data.precio_especials.length){
+                descuentos.value = true
+            }else{
+                descuentos.value = false
+            }
+            
         }
     } catch (error) {
         console.error('Error fetching clients:', error);
