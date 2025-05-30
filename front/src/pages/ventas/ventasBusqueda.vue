@@ -1,10 +1,10 @@
 <template>
   <v-row>
     <v-col cols="7">
-      <scrollerVentas :ventas="ventas"></scrollerVentas>
+      <scrollerVentas :loading="loading"  :resumen="resumen"></scrollerVentas>
     </v-col>
     <v-col cols="5">
-      <totalVentas></totalVentas>
+      <totalVentas :resumen="resumen"></totalVentas>
 
     </v-col>
   </v-row>
@@ -17,6 +17,10 @@ import formatCurrency from '@/composables/formatCurrency'
 import useTime from '@/composables/datetime.js';
 import totalVentas from './totalVentas.vue';
 import scrollerVentas from './scrollerVentas.vue';
+import { useVentas } from '@/composables/calculateSales.js'
+const { fetchVentasPorFecha,  } = useVentas()
+const resumen = ref({})
+
 const getTime = (isoString) => {
   const date = new Date(isoString)
   return date.toLocaleTimeString([], {
@@ -26,6 +30,7 @@ const getTime = (isoString) => {
   })
 }
 
+const loading = ref(false)
 
 const { 
   formatDate,
@@ -36,45 +41,25 @@ const {
   formatos
 } = useTime()
 
-const ventas = ref([])
+const ventas = ref({
+  cobradas: [],
+  pendientes: [],
+  canceladas: []
+})
 
-const get_ventas = async () => {
-  try {
-    const eighthHoursAgo = new Date(Date.now() - 15 * 60 * 60 * 1000 - (6 * 60 * 60 * 1000)).toISOString()
 
-    const { data, error } = await supabase
-      .from('ventas')
-      .select(`
-        *,
-        producto_ventas (
-          total,
-          precio,
-          peso,
-          productos (
-            nombre
-          )
-        )
-      `)
-      .eq('estatus', 'cobrado')
-      .gte('created_at', eighthHoursAgo)
-      .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Error fetching sales:', error)
-      return
-    }
+onMounted( async () => {
 
-    // Agregamos el campo `dialog` para cada venta
-    ventas.value = data.map(venta => ({
-      ...venta,
-      dialog: false
-    }))
-  } catch (error) {
-    console.error('Unexpected error:', error)
-  }
-}
+  loading.value = true
+  resumen.value =  await fetchVentasPorFecha()
+  loading.value = false
 
-onMounted(() => {
-  get_ventas()
+  console.log('este es:',resumen.value);
+  ventas.value.cobradas = resumen.value.ventasCobradas,
+  ventas.value.canceladas = resumen.value.ventasCanceladas,
+  ventas.value.pendientes = resumen.value.ventasPendientes
+  
+  
 })
 </script>

@@ -1,48 +1,64 @@
 <template>
-  <div class="ticket-container">
-    <div class="ticket" ref="ticketRef">
-      <div class="ticket-header">
-        <h2>El Puebla</h2>
-        <p>Carnicería y Abastos</p>
-        <p>{{ formatDate(new Date()) }}</p>
-        <hr>
-      </div>
-
-      <div class="ticket-body">
-        <table>
-          <thead>
-            <tr>
-              <th style="text-align:left">Producto</th>
-              <th style="text-align:right">Kg</th>
-              <th style="text-align:right">P. Unit</th>
-              <th style="text-align:right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="producto in venta.producto_ventas" :key="producto.id">
-              <td>{{ producto.productos.nombre }}</td>
-              <td style="text-align:right">{{ producto.peso.toFixed(2) }}</td>
-              <td style="text-align:right">${{ producto.precio.toFixed(2) }}</td>
-              <td style="text-align:right">${{ producto.total.toFixed(2) }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <hr>
-        <div class="ticket-total">
-          <strong>Total: ${{ venta.total.toFixed(2) }}</strong>
+  <v-card>
+    <v-card-title>
+      <p class="text-h5 text-center">
+        ¿Desea imprimir su ticket?
+      </p>
+    </v-card-title>
+    <v-card-text>
+      <div class="ticket-container">
+        <div class="ticket" ref="ticketRef">
+          <div class="ticket-header">
+            <h2>El Puebla</h2>
+            <p>Carnicería y Abastos</p>
+            <p>{{ formatDate(new Date()) }}</p>
+            <hr>
+          </div>
+    
+          <div class="ticket-body">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left">Producto</th>
+                  <th style="text-align:right">Kg</th>
+                  <th style="text-align:right">P. Unit</th>
+                  <th style="text-align:right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="producto in venta.producto_ventas" :key="producto.id">
+                  <td>{{ producto.productos.nombre }}</td>
+                  <td style="text-align:right">{{ producto.peso.toFixed(2) }}</td>
+                  <td style="text-align:right">${{ producto.precio.toFixed(2) }}</td>
+                  <td style="text-align:right">${{ producto.total.toFixed(2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <hr>
+            <div class="ticket-total">
+              <strong>Total: ${{ venta.total.toFixed(2) }}</strong>
+            </div>
+          </div>
+    
+          <div class="ticket-footer">
+            <p>¡Gracias por su compra!</p>
+            <p>Venta #{{ venta.id }}</p>
+          </div>
         </div>
       </div>
+    </v-card-text>
+    <v-card-actions>
+      <v-row>
+        <v-col cols="6">
+          <v-btn block variant="flat" @click="$emit('close')" color="red">Cerrar</v-btn>
 
-      <div class="ticket-footer">
-        <p>¡Gracias por su compra!</p>
-        <p>Venta #{{ venta.id }}</p>
-      </div>
-    </div>
-
-    <div class="print-actions">
-      <v-btn @click="printTicket">Imprimir Ticket</v-btn>
-    </div>
-  </div>
+        </v-col>
+        <v-col cols="6">
+          <v-btn variant="flat" block @click="printTicket" color="green">Imprimir</v-btn>
+        </v-col>
+      </v-row>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script setup>
@@ -54,6 +70,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['close', 'finished'])
 
 const ticketRef = ref(null)
 

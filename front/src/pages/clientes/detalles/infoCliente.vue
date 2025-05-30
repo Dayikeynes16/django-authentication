@@ -1,24 +1,24 @@
 <template>
     <v-container>
-        <v-card elevation="4" variant="flat">
-            <v-row>
-                <v-col cols="8">
-                  <v-card-title>
+        <v-card elevation="4" variant="outlined" class="bg-white">
+             <v-card-title>
+                <p class="h5">
                     Información del cliente 
-                  </v-card-title>
-                </v-col>
-            </v-row>
+                </p>
+            </v-card-title>
+            
             <v-card-text>
-                <v-row>
-                    <v-col cols="12" md="6">
-                        <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
-                        <p  v-if="cliente.nickname">  <strong>Apodo:</strong> {{ cliente.nickname }}</p>
-                        <p><strong>Telefono:</strong> {{ cliente.telefono }}</p>
-                        <p><strong>Direccion:</strong> {{ cliente.direccion }}</p>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                    </v-col>
-                </v-row>
+                <v-list variant="flat" class="bg-white">
+                    <v-list-item prepend-icon="mdi-account" class="bg-white">
+                        {{ cliente.nombre }}
+                    </v-list-item>
+                    <v-list-item prepend-icon="mdi-phone" class="bg-white">
+                        {{ cliente.telefono }}
+                    </v-list-item>
+                     <v-list-item prepend-icon="mdi-map-marker" class="bg-white">
+                        {{ cliente.direccion }}
+                    </v-list-item>
+                </v-list>
             </v-card-text>
         </v-card>
 

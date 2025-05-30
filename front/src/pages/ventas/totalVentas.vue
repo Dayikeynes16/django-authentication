@@ -46,7 +46,7 @@
                 <v-icon color="brown" size="40" icon="mdi-invoice-list"></v-icon>
                 <p>N. Ventas <br>
                   <strong>
-                    {{ resumen.ventas?.length || 0 }}
+                    {{ resumen.ventasCobradas?.length || 0 }}
                   </strong>
                   </p>              
               </v-card-text>
@@ -99,12 +99,18 @@
 </template>
 
 <script setup>
-import { useVentas } from '@/composables/calculateSales.js'
-import {  onMounted, ref } from 'vue'
+import {  onMounted, ref, watch } from 'vue'
 import supabase from '@/supabase.js'
 import { getMexicoLocalString } from '../../composables/localtime.js';
 import useTime from "@/composables/datetime.js";
 
+const props = defineProps({
+  resumen: {
+    type: Object,
+    required: true
+  }
+
+})
 const { 
   formatDate,
   formatDateWithDay,
@@ -114,7 +120,6 @@ const {
   formatos
 } = useTime()
 
-const { fetchVentasPorFecha } = useVentas()
 
 import formatCurrency  from '@/composables/formatCurrency.js'
 
@@ -122,53 +127,20 @@ const ventas = ref([])
 const totalVentas = ref(0)
 
 
-const resumen = ref({})
+const resumen = ref(props.resumen)
 
 
 
 
-const getVentas = async () => {
-  try {
-    // Obtener la fecha de inicio del día en hora local de México (00:00:00)
-    const mexicoDate = getMexicoLocalString()
-    const startOfDay = mexicoDate.split(' ')[0] + ' 00:00:00'
-
-    const { data, error } = await supabase
-      .from('ventas')
-      .select(`
-        *,
-        producto_ventas (
-          total,
-          precio,
-          peso,
-          productos (
-            nombre
-          )
-        )
-      `)
-      .eq('estatus', 'cobrado')
-      .gte('created_at', startOfDay)
-
-    if (error) {
-      console.error('Error al obtener ventas:', error)
-      return
-    }
-
-    ventas.value = data
-
-    // Calcular el total de ventas
-    totalVentas.value = ventas.value.reduce((acc, venta) => acc + venta.total, 0)
 
 
 
-  } catch (err) {
-    console.error('Error inesperado:', err)
-  }
-}
-onMounted(async ()  => {
-  resumen.value =  await fetchVentasPorFecha()
-  console.log('resumen.value', resumen.value);
-  
-})
+watch(
+  () => props.resumen,
+  (nuevoResumen) => {
+    resumen.value = nuevoResumen
+  },
+  { immediate: true, deep: true }
+)
 
 </script>

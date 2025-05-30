@@ -17,6 +17,18 @@
                             color="orange"
                             label="Pendiente"
                             variant="outlined"
+                            prepend-icon="mdi-alert"
+
+                            class="ma-2">
+                            {{ venta.estatus }}
+                        </v-chip>
+                        <v-chip
+                            v-if="venta.estatus === 'servicio domicilio'"
+                            
+                            color="grey"
+                            label="servicio a domicilio"
+                            variant="outlined"
+                            prepend-icon="mdi-moped-outline"
 
                             class="ma-2">
                             {{ venta.estatus }}
@@ -27,6 +39,7 @@
                             color="green"
                             label="cobrado"
                             variant="outlined"
+                            prepend-icon="mdi-archive-check"
 
                             class="ma-2">
                             {{ venta.estatus }}
@@ -35,9 +48,11 @@
                         <v-chip
 
                             v-else-if="venta.estatus === 'activo'"
+
                             variant="outlined"
-                            color="orange"
+                            color="blue"
                             label="Activo"
+                            prepend-icon="mdi-check"
                             class="ma-2">
                           
                             {{ venta.estatus }}
@@ -97,47 +112,55 @@
     
                     <v-card-text v-if="page === 3" class="flex-grow-1 overflow-y-auto">
 
-                        <v-card v-if="venta.clientes" variant="outlined bg-white ma-3">
-                            <v-list-item class="d-flex justify-center pa-3 ">
-                                <v-icon icon="mdi-account" size="100"></v-icon>
-                            </v-list-item>
-                            <v-list-item class="d-flex justify-center pa-3 ">
-                                <h1 class="text-h5">Cliente: {{ venta.clientes.nombre }}</h1>
-                            </v-list-item>
-                            <v-list-item class="d-flex justify-center pa-3 ">
-                                <h1 class="text-h5">Telefono: {{ venta.clientes.telefono }}</h1>
-                            </v-list-item>
-                            <v-list-item class="d-flex justify-center pa-3 ">
-                                <h1 class="text-h5">Direccion: {{ venta.clientes.direccion }}</h1>
-                            </v-list-item>
-                        </v-card>
-                        <aplicarDescuento  @actualizado="refresh" :venta="venta" />
+                        <!-- <v-card v-if="venta.clientes" variant="outlined bg-white ma-3">
+                            <v-card-title class="d-flex justify-center">
+                                <h1 class="text-h5">Cliente</h1>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-row>
+                                    <v-col cols="12">
+                                        <div align="">
+                                            {{ venta.clientes.nombre }}
+                                        </div>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <div v-if="venta.clientes.nickname" align="">
+                                            {{ (venta.clientes.nickname) }}
+                                        </div>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </v-card> -->
+                        
+                        <aplicarDescuento   @actualizado="refresh" :venta="venta" />
                     
                     </v-card-text>
                  
                     <v-card-text v-if="page === 4" class="flex-grow-1 overflow-y-auto">
                         <v-row>
                             <v-col cols="12">
-                                <v-btn color="red" @click="cancel_sale" block append-icon="mdi-cancel" variant="outlined">Cancelar</v-btn>
+                                <v-btn color="red" @click="changeStatus('cancelado')" block append-icon="mdi-cancel" variant="outlined">Cancelar</v-btn>
                                 </v-col>
                             <v-col cols="12">
-                                <v-btn color="warning"  @click="pending" variant="outlined" block append-icon="mdi-alert">Pendiente</v-btn>
+                                <v-btn color="warning"  @click="changeStatus('pendiente')" variant="outlined" block append-icon="mdi-alert">Pendiente</v-btn>
                             </v-col>
                             <v-col cols="12">
-                                <v-btn color="green" block append-icon="mdi-check" variant="outlined"></v-btn>
+                                <v-btn color="grey" @click="changeStatus('servicio domicilio')" block append-icon="mdi-moped-outline" variant="outlined">Para entrega</v-btn>
                             </v-col>
-                            <v-col cols="6">
-
+                            <v-col>
+                                <v-btn color="blue" @click="print = true" block append-icon="mdi-printer" variant="outlined">imprimir</v-btn>
+                               <v-dialog persistent v-model="print" max-width="500px">
+                                    <printing @close="print = false"  :venta="venta"></printing>
+                                </v-dialog>
                             </v-col>
+                           
                         </v-row>
-
                     </v-card-text>
-    
-                    
                 </v-col>
               </v-row>
                 </v-card-text>
             </v-card>
+             
     </v-container>
 
 </template>
@@ -148,11 +171,16 @@ import formatCurrency from '@/composables/formatCurrency';
 import aplicarDescuento from '../clientes/aplicarDescuento.vue';
 import { getMexicoLocalString } from '@/composables/localtime'
 import snackbarfrom from '@/components/snackbar.vue';
-import pagos from './cobrando/pagos.vue';
+import printing from './printing.vue';
+
+const print = ref(false);
 
 const showNotification = ref(false);
 const notificationType = ref('');
 const notificationMessage = ref('');
+
+const emits = defineEmits(['cancel_sale', 'procesarPago', 'finished', 'updateVenta']);
+
 
 const finish = () => {
     emits('finished');
@@ -169,18 +197,11 @@ const pending  = async () => {
   if (error) {
     mostrarNotificacion('error', 'Error al marcar como pendiente');
   } else {
-    mostrarNotificacion(true);
-    emits('finished');
-    showNotification.value = false;
+    emits('finished') 
 }};
 
-const emits = defineEmits(['cancel_sale', 'procesarPago', 'finished']);
 
 const page = ref(1);
-
-const finalizado = () => {
-    emits('finished');
-}
 
 const headers = [
   { text: 'Nombre', value: 'nombre' },
@@ -188,6 +209,8 @@ const headers = [
   { text: 'Peso', value: 'peso' },
   { text: 'Total', value: 'total' }
 ];
+
+
 
 const metodo_de_pago = ref({
   total: 0,
@@ -314,6 +337,36 @@ const update_sale = async (venta) => {
 };
 
 
+const changeStatus = async (status) => {
+  if(status === 'cancelado'){
+    await cancel_sale();
+    return;
+  }
+    const { data, error } = await supabase
+        .from('ventas')
+        .update({ estatus: status })
+        .eq('id', venta.value.id)
+        .select(
+            `*, 
+            producto_ventas(
+            *, 
+            productos(*)),
+            pagos(*),
+            clientes(*)`
+        )
+        .single();
+    if (error) {
+        console.error('Error al cambiar el estatus de la venta:', error);
+    } else {
+        showNotification.value = true;
+        notificationType.value = 'success';
+        notificationMessage.value = `Estatus cambiado a ${status}`;
+        console.log('Estatus cambiado:', data);
+        venta.value.estatus = status;
+        
+    }
+};
+
 
 const refresh = () => {
     get_sale(venta.value.id);
@@ -350,6 +403,8 @@ const cancel_sale = async () => {
         notificationType.value = 'error';
         notificationMessage.value = 'Venta cancelada'; 
         emits('finished');
+        get_sale(venta.value.id);
+
     }
 };
 

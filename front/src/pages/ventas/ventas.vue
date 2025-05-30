@@ -24,17 +24,18 @@
             </v-card>
       </v-col>
       <v-col cols="6" class="d-flex flex-column fill-width" height="100%">
-        <venta height="700px"   @finished="remove_venta" v-if="selected_venta" :venta="selected_venta"></venta>
+        <venta height="700px"   @finished="remove_venta('warning','venta pendiente')" v-if="selected_venta" :venta="selected_venta"></venta>
         <printing  v-if="selected_venta == 3" :venta="selected_venta" />
       </v-col>
       <v-col cols="3" >
-        <pagos @finished="remove_venta" v-if="selected_venta" :venta="selected_venta"></pagos>
-        
+        <pagos @finished="imprimir" v-if="selected_venta" :venta="selected_venta"></pagos>
       </v-col>
     </v-row>
   </div>
   <snackbar :type="notificationType" :message="notificationMessage" :show="showNotification" />
-
+  <v-dialog persistent v-model="print" max-width="500px">
+      <printing @close="removeAndClose" @finished="remove_venta('success','venta exitosa')" :venta="selected_venta"></printing>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -47,6 +48,18 @@ import venta from './venta.vue';
 import formatCurrency from '@/composables/formatCurrency';
 import useTime from "@/composables/datetime.js";
 import pagos from './cobrando/pagos.vue';
+
+
+const print = ref(false);
+
+const imprimir = () => {
+  print.value = true;
+}
+
+const removeAndClose = () => {
+  remove_venta();
+  print.value = false;
+}
 
 
 const { 
@@ -108,12 +121,11 @@ const get_specific_venta = async (id) => {
 
 
 
-const remove_venta = () => {
+const remove_venta = ( type,message) => {
   console.log('Removing venta:', selected_venta.value);
-  
   let id = selected_venta.value.id;
   ventas.value = ventas.value.filter(venta => venta.id !== id);
-  mostrarNotificacion('success', `Venta #${id} terminada`);
+  mostrarNotificacion(type, message);
   selected_venta.value = null;
 };
 

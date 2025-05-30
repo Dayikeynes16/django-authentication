@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-card variant="outlined" class="bg-white ">
+        <v-card width="100%" variant="outlined" class="bg-white ">
             <v-card-title>
                 <strong>
                     Detalles de Pago
@@ -59,7 +59,7 @@
                     <v-divider></v-divider>
                 </div>
                 <div >
-                            <v-list v-if="existingPayments" class="pa-0 ma-0">
+                    <v-list v-if="existingPayments" class="pa-0 ma-0">
                         
                             <div class="text-h6 bg-white ">pagos realizados</div>
                             <v-list-item v-for="i in venta.pagos" class="bg-white">
@@ -94,7 +94,7 @@
                                     </v-row>
                                 </v-list-item-content>
                             </v-list-item>
-                            </v-list>
+                    </v-list>
                 </div>
             </v-card-text>
         </v-card>
@@ -146,8 +146,8 @@ const existingPayments = computed(() => {
 
 const payment = computed(() => {
   const pago = {
-    total: props.venta.total,
-    restante: props.venta.total - props.venta.pagos.reduce((acc, pago) => acc + pago.total, 0) | 0,
+    total: Math.round(props.venta.total),
+    restante: Math.round(props.venta.total) - props.venta.pagos.reduce((acc, pago) => acc + pago.total, 0) | 0,
     cambio: 0,
   }
 
@@ -212,7 +212,6 @@ const finishSale = async () => {
         console.log('Vedbdhs:', data);
 
         emits('finished');
-        
     }
 };
 
