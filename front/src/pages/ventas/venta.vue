@@ -1,169 +1,143 @@
 <template>
-    <v-container >
-        <snackbar :type="notificationType" :message="notificationMessage" :show="showNotification" />
-              <v-card variant="outlined" width="100%" height="100%" class="fill-width d-flex flex-column" style="width: 100% !important;" >
-                <v-card-title>
-                  <v-row>
-                      <v-col cols="6" align="left" class="mb-0 pb-0">
-                        <h1 class="text-h5">Venta: #{{ venta.id }}</h1>
-                      </v-col>
-                      <v-col cols="6" align="right" class="mb-0 pb-0">
-                        <h1 class="text-h5">Total: {{ formatCurrency(venta.total) }}</h1>
-                      </v-col>
-                       <v-col cols="6" align="left" class="mt-0 pt-0">
-                        <v-chip
-                            v-if="venta.estatus === 'pendiente'"
-                            
-                            color="orange"
-                            label="Pendiente"
-                            variant="outlined"
-                            prepend-icon="mdi-alert"
+  <v-container>
+    <snackbar :type="notificationType" :message="notificationMessage" :show="showNotification" />
 
-                            class="ma-2">
-                            {{ venta.estatus }}
-                        </v-chip>
-                        <v-chip
-                            v-if="venta.estatus === 'servicio domicilio'"
-                            
-                            color="grey"
-                            label="servicio a domicilio"
-                            variant="outlined"
-                            prepend-icon="mdi-moped-outline"
+    <v-card variant="outlined" width="100%" height="100%" class="fill-width d-flex flex-column">
+      <v-card-title>
+        <v-row>
+          <v-col cols="6" class="mb-0 pb-0 text-left">
+            <h1 class="text-h5">Venta: #{{ venta.id }}</h1>
+          </v-col>
+          <v-col cols="6" class="mb-0 pb-0 text-right">
+            <h1 class="text-h5">Total: {{ formatCurrency(venta.total) }}</h1>
+          </v-col>
+          <v-col cols="12" class="mt-0 pt-0">
+            <v-chip
+              v-if="venta.estatus === 'pendiente'"
+              color="orange"
+              label
+              variant="outlined"
+              prepend-icon="mdi-alert"
+              class="ma-2"
+            >
+              {{ venta.estatus }}
+            </v-chip>
+            <v-chip
+              v-if="venta.estatus === 'servicio domicilio'"
+              color="grey"
+              label
+              variant="outlined"
+              prepend-icon="mdi-moped-outline"
+              class="ma-2"
+            >
+              {{ venta.estatus }}
+            </v-chip>
+            <v-chip
+              v-if="venta.estatus === 'cobrado'"
+              color="green"
+              label
+              variant="outlined"
+              prepend-icon="mdi-archive-check"
+              class="ma-2"
+            >
+              {{ venta.estatus }}
+            </v-chip>
+            <v-chip
+              v-else-if="venta.estatus === 'activo'"
+              color="blue"
+              label
+              variant="outlined"
+              prepend-icon="mdi-check"
+              class="ma-2"
+            >
+              {{ venta.estatus }}
+            </v-chip>
+            <v-chip
+              v-else-if="venta.estatus === 'cancelado'"
+              color="red"
+              label
+              variant="outlined"
+              prepend-icon="mdi-cancel"
+              class="ma-2"
+            >
+              {{ venta.estatus }}
+            </v-chip>
+          </v-col>
+        </v-row>
+      </v-card-title>
 
-                            class="ma-2">
-                            {{ venta.estatus }}
-                        </v-chip>
-                        <v-chip
-                            v-if="venta.estatus === 'cobrado'"
-                            
-                            color="green"
-                            label="cobrado"
-                            variant="outlined"
-                            prepend-icon="mdi-archive-check"
+      <v-card-text class="flex-grow-1 overflow-y-auto">
+        <v-row>
+          <!-- Panel lateral de navegación -->
+          <v-col cols="2">
+            <v-list class="bg-grey-lighten-4 rounded-lg">
+              <v-list-item class="d-flex justify-center pa-3">
+                <v-icon @click="page = 1" class="cursor-pointer" size="30" icon="mdi-cart" />
+              </v-list-item>
+              <v-list-item class="d-flex justify-center pa-3">
+                <v-icon @click="page = 3" class="cursor-pointer" size="30" icon="mdi-account" />
+              </v-list-item>
+              <v-list-item class="d-flex justify-center pa-3">
+                <v-icon @click="page = 4" class="cursor-pointer" size="30" icon="mdi-multicast" />
+              </v-list-item>
+            </v-list>
+          </v-col>
 
-                            class="ma-2">
-                            {{ venta.estatus }}
-                        </v-chip>
-                      
-                        <v-chip
-
-                            v-else-if="venta.estatus === 'activo'"
-
-                            variant="outlined"
-                            color="blue"
-                            label="Activo"
-                            prepend-icon="mdi-check"
-                            class="ma-2">
-                          
-                            {{ venta.estatus }}
-                            
-                        </v-chip>
-                        <v-chip
-                            v-else-if="venta.estatus === 'cancelado'"
-                            variant="outlined"
-                            color="red"
-                            label="Pagado"
-                            class="ma-2">
-                          
-                            {{ venta.estatus }}
-                            
-                        </v-chip>
-                        
-                      </v-col>
-                  </v-row>
-                 
-
-
-                
-
-                            
+          <!-- Contenido de la sección -->
+          <v-col cols="10">
+            <v-card-text v-if="page === 1">
+              <v-card>
+                <v-card-title class="d-flex justify-center">
+                  <h1 class="text-h5">Productos</h1>
                 </v-card-title>
-                <v-card-text class="flex-grow-1 overflow-y-auto" >
-                    <v-row>
-                <v-col cols="2" >
-                  
-                  <v-list height="100%" class="bg-red">
-                    <v-list-item class="d-flex justify-center pa-3 ">
-                      <v-icon @click="page = 1" class="cursor-pointer" size="30" icon="mdi-cart"></v-icon>
-                    </v-list-item>
-                    <v-list-item class="d-flex justify-center pa-3 ">
-                      <v-icon @click="page = 3" class="cursor-pointer" size="30" icon="mdi-account"></v-icon>
-                    </v-list-item>
-                    
-                    <v-list-item class="d-flex justify-center pa-3 ">
-                        <v-icon @click="page=4" icon="mdi-multicast" class="cursor-pointer" size="30"></v-icon>
-                    </v-list-item>
+                <v-data-table
+                  height="100%"
+                  variant="outlined"
+                  class="pa-2 bg-white"
+                  :items="order"
+                  hide-default-footer
+                />
+              </v-card>
+            </v-card-text>
 
-                  </v-list>
+            <v-card-text v-if="page === 3">
+              <aplicarDescuento @actualizado="refresh" :venta="venta" />
+            </v-card-text>
+
+            <v-card-text v-if="page === 4">
+              <v-row>
+                <v-col cols="12">
+                  <v-btn color="red" @click="changeStatus('cancelado')" block append-icon="mdi-cancel" variant="outlined">
+                    Cancelar
+                  </v-btn>
                 </v-col>
-                <v-col cols="10" >
-                
-                    <v-card-text v-if="page === 1" class="flex-grow-1 overflow-y-auto">
-                      <v-card>
-                        <v-card-title class="d-flex justify-center">
-                            <h1 class="text-h5">Productos</h1>
-                        </v-card-title>
-                        <v-data-table height="100%" variant="outlined" class="pa-2 bg-white " :items="order" hide-default-footer >
-                        </v-data-table>
-                      </v-card>
-
-
-                    </v-card-text>
-    
-                    <v-card-text v-if="page === 3" class="flex-grow-1 overflow-y-auto">
-
-                        <!-- <v-card v-if="venta.clientes" variant="outlined bg-white ma-3">
-                            <v-card-title class="d-flex justify-center">
-                                <h1 class="text-h5">Cliente</h1>
-                            </v-card-title>
-                            <v-card-text>
-                                <v-row>
-                                    <v-col cols="12">
-                                        <div align="">
-                                            {{ venta.clientes.nombre }}
-                                        </div>
-                                    </v-col>
-                                    <v-col cols="6">
-                                        <div v-if="venta.clientes.nickname" align="">
-                                            {{ (venta.clientes.nickname) }}
-                                        </div>
-                                    </v-col>
-                                </v-row>
-                            </v-card-text>
-                        </v-card> -->
-                        
-                        <aplicarDescuento   @actualizado="refresh" :venta="venta" />
-                    
-                    </v-card-text>
-                 
-                    <v-card-text v-if="page === 4" class="flex-grow-1 overflow-y-auto">
-                        <v-row>
-                            <v-col cols="12">
-                                <v-btn color="red" @click="changeStatus('cancelado')" block append-icon="mdi-cancel" variant="outlined">Cancelar</v-btn>
-                                </v-col>
-                            <v-col cols="12">
-                                <v-btn color="warning"  @click="changeStatus('pendiente')" variant="outlined" block append-icon="mdi-alert">Pendiente</v-btn>
-                            </v-col>
-                            <v-col cols="12">
-                                <v-btn color="grey" @click="changeStatus('servicio domicilio')" block append-icon="mdi-moped-outline" variant="outlined">Para entrega</v-btn>
-                            </v-col>
-                            <v-col>
-                                <v-btn color="blue" @click="print = true" block append-icon="mdi-printer" variant="outlined">imprimir</v-btn>
-                               <v-dialog persistent v-model="print" max-width="500px">
-                                    <printing @close="print = false"  :venta="venta"></printing>
-                                </v-dialog>
-                            </v-col>
-                           
-                        </v-row>
-                    </v-card-text>
+                <v-col cols="12">
+                  <v-btn color="warning" @click="changeStatus('pendiente')" block append-icon="mdi-alert" variant="outlined">
+                    Pendiente
+                  </v-btn>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn color="grey" @click="changeStatus('servicio domicilio')" block append-icon="mdi-moped-outline" variant="outlined">
+                    Para entrega
+                  </v-btn>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn color="blue" @click="print = true" block append-icon="mdi-printer" variant="outlined">
+                    Imprimir
+                  </v-btn>
+                  <v-dialog persistent v-model="print" max-width="500px">
+                    <printing @close="print = false" :venta="venta" />
+                  </v-dialog>
                 </v-col>
               </v-row>
-                </v-card-text>
-            </v-card>
-             
-    </v-container>
-
+            </v-card-text>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
+
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import supabase from '@/supabase';
@@ -363,6 +337,9 @@ const changeStatus = async (status) => {
         notificationMessage.value = `Estatus cambiado a ${status}`;
         console.log('Estatus cambiado:', data);
         venta.value.estatus = status;
+        setTimeout(() => {
+          emits('updateVenta');
+        }, 1500);
         
     }
 };

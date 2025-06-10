@@ -24,7 +24,7 @@
             </v-card>
       </v-col>
       <v-col cols="6" class="d-flex flex-column fill-width" height="100%">
-        <venta height="700px"   @finished="remove_venta('warning','venta pendiente')" v-if="selected_venta" :venta="selected_venta"></venta>
+        <venta height="700px" @updateVenta="removeAndClose()"   @finished="remove_venta('warning','venta pendiente')" v-if="selected_venta" :venta="selected_venta"></venta>
         <printing  v-if="selected_venta == 3" :venta="selected_venta" />
       </v-col>
       <v-col cols="3" >

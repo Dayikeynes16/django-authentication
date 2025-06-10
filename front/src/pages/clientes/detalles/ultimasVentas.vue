@@ -16,7 +16,9 @@
       <v-card-text v-if="historial">
         <div style="overflow-x: auto; white-space: nowrap;">
           <v-infinite-scroll
-            direction="horizontal"
+            no-data-text="No hay Ventas"
+
+            direction="vertical"
             :items="ventas"
             @load="load"
           >

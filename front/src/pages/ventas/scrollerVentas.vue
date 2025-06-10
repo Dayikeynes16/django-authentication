@@ -50,7 +50,7 @@
                   <v-btn
                     block
                     class="ma-1 pa-1"
-                    :variant="filtroActivo === 'cobrado' ? 'tonal' : 'text'"
+                    :variant="filtroActivo === 'servicio domicilio' ? 'tonal' : 'text'"
                     color="green"
                     prepend-icon="mdi-moped-outline"
                     @click="filter('servicio domicilio')"

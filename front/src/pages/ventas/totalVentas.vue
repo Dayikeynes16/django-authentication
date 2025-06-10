@@ -3,7 +3,7 @@
     <v-card variant="outlined"  class="ma-4">
       <v-card-title>El Puebla     </v-card-title>
       <v-card-subtitle>
-        Ventas del dia {{ formatDateWithDay(getMexicoLocalString()) }}
+        Ventas del diassss {{ formatDateWithDay(getMexicoLocalString()) }}
       </v-card-subtitle>
       <v-card-text>
         <v-row>

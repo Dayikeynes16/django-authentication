@@ -12,19 +12,21 @@ import insertarVenta from './pages/ventas/insertarVenta.vue'
 import clientes from './pages/clientes/clientes.vue'
 import clientesDetalles from './pages/clientes/clientesDetalles.vue'
 import ventaEspecifica from './pages/ventaEspecifica/ventaEspecificaFinal.vue'
+import busqueda from './pages/busquedas/main.vue'
 
 
 const routes = [
-  { path: '/', redirect: '/ventas' },  // Redirigir a /inicio por defecto
+  { path: '/', redirect: '/ventas' },  
   { path: '/login', component: Login },
-  { path: '/inicio', component: inicio, meta: { requiresAuth: true } },  // Ruta protegida
-  { path: '/pagina2', component: pagina2, meta: { requiresAuth: true }, name: 'login' }, // Ruta protegida
-  { path: '/clientes', component: clientes, meta: { requiresAuth: true }},
-  { path: '/ventas', component: ventas, meta: { requiresAuth: true }},
-  { path: '/totalVentas', component: ventasBusqueda, meta: { requiresAuth: true }}, 
-  { path: '/insertarVenta', component: insertarVenta, meta: { requiresAuth: true }},
-  { path: '/clientesDetalles/:id', name: 'clientesDetalles' ,component: clientesDetalles, meta: { requiresAuth: true }}, // Ruta protegida
-  { path: '/ventaEspecifica/:id', name: 'ventaEspecifica' ,component: ventaEspecifica, meta: { requiresAuth: true }}, // Ruta protegida
+  { path: '/inicio', component: inicio, meta: { requiresAuth: false } },  
+  { path: '/pagina2', component: pagina2, meta: { requiresAuth: false }, name: 'login' }, // Ruta protegida
+  { path: '/clientes', component: clientes, meta: { requiresAuth: false }},
+  { path: '/ventas', component: ventas, meta: { requiresAuth: false }},
+  { path: '/totalVentas', component: ventasBusqueda, meta: { requiresAuth: false }}, 
+  { path: '/insertarVenta', component: insertarVenta, meta: { requiresAuth: false }},
+  { path: '/clientesDetalles/:id', name: 'clientesDetalles' ,component: clientesDetalles, meta: { requiresAuth: false }}, 
+  { path: '/ventaEspecifica/:id', name: 'ventaEspecifica' ,component: ventaEspecifica, meta: { requiresAuth: false }}, 
+  { path: '/busqueda', name: 'busqueda' ,component: busqueda, meta: { requiresAuth: false }}, 
 
 
 ]

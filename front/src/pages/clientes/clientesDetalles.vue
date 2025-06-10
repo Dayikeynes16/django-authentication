@@ -7,26 +7,11 @@
                         <infoCliente :cliente="client"></infoCliente>
                     </v-col>
                     <v-col cols="12">
-                        <v-row>
-                           
-                            <v-col cols="12"></v-col>
-                            <v-col cols="12"></v-col>
-                            <v-col cols="12"></v-col>
-                        </v-row>
-                        <productosDescuentos v-if="descuentos === true"  :productos="client.precio_especials">
+                        
+                       
+                        <productosDescuentos @creado="get_clients(id)" :cliente="client"  :productos="client.precio_especials">
                         </productosDescuentos>
-                        <div v-else>
-                                <v-container>
-                                    <v-card variant="outlined" class="pa-5">
-                                        <v-card-title>
-                                            Productos con descuento
-                                        </v-card-title>
-                                        <v-card-text>
-                                            Este cliente no cuenta productos con descuento
-                                        </v-card-text>
-                                    </v-card>
-                                </v-container>
-                        </div>
+                   
                     </v-col>
                 
                 </v-row>

@@ -14,7 +14,7 @@
 
     <v-col cols="7">
       <v-row>
-        <venta v-if="showSale" :venta="ventaEspecifica" />
+        <venta :update v-if="showSale" :venta="ventaEspecifica" />
         <v-col cols="12">
 
         </v-col>
