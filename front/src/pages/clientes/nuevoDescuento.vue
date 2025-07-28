@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <v-card variant="outlined" class="pa-5 bg-white" max-width="500" mx-auto>
+
+   
+    <snackbar v-if="notificacion.show" :message="notificacion.message" :type="notificacion.type" :show="notificacion.show" />
+    <v-card variant="outlined" elevation="1" class="pa-5 bg-white" max-width="500" mx-auto>
       <v-card-title class="text-h6 text-center">
         {{ esEdicion ? 'Editar descuento' : 'Nuevo descuento' }}
       </v-card-title>
@@ -50,6 +53,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import supabase from '@/supabase'
 import { getMexicoLocalString } from '@/composables/localtime'
+import snackbar from '@/components/snackbar.vue'
 
 const props = defineProps({
   cliente_id: {
@@ -61,6 +65,23 @@ const props = defineProps({
     default: null
   }
 })
+
+const notificacion = ref({
+  show: false,
+  message: '',
+  type: 'success'
+})
+
+const mostrarSnackbar = (msg, tipo) => {
+  notificacion.value.message = msg
+  notificacion.value.type = tipo
+  notificacion.value.show = true
+
+  // Ocultar después de timeout
+  setTimeout(() => {
+    snackbar.value.show = false
+  }, 3000)
+}
 
 const emit = defineEmits(['cerrar', 'creado'])
 
@@ -90,7 +111,7 @@ const get_productos = async () => {
 
 const guardarDescuento = async () => {
   if (!producto_id.value || !precio.value) {
-    alert('Debes seleccionar un producto y asignar un precio.')
+    mostrarSnackbar('Por favor completa todos los campos.', 'error')
     return
   }
 
@@ -102,10 +123,9 @@ const guardarDescuento = async () => {
       .eq('id', props.descuento.id)
 
     if (error) {
-      console.error('Error al editar descuento:', error)
-      alert('Error al guardar los cambios.')
+      mostrarSnackbar('Error al editar el descuento.', 'error')
     } else {
-      alert('Descuento actualizado correctamente.')
+      mostrarSnackbar('Descuento actualizado correctamente.', 'success')
       emit('creado')
       emit('cerrar')
     }
@@ -119,13 +139,12 @@ const guardarDescuento = async () => {
       .maybeSingle()
 
     if (errorVerif) {
-      console.error('Error verificando existencia:', errorVerif)
-      alert('Error al verificar si ya existe un descuento.')
+      mostrarSnackbar('Error al verificar si ya existe un descuento.', 'error')
       return
     }
 
     if (existe) {
-      alert('Este cliente ya tiene un descuento asignado a ese producto.')
+      mostrarSnackbar('Este cliente ya tiene un descuento asignado a ese producto.', 'warning')
       return
     }
 
@@ -139,9 +158,9 @@ const guardarDescuento = async () => {
 
     if (error) {
       console.error('Error al crear descuento:', error)
-      alert('Error al crear el descuento.')
+      mostrarSnackbar('Error al crear el descuento.', 'error')
     } else {
-      alert('Descuento creado correctamente.')
+      mostrarSnackbar('Descuento creado correctamente.', 'success')
       emit('creado')
       emit('cerrar')
     }

@@ -9,13 +9,15 @@
       style="width: 50px !important;  padding-left: 0% !important; padding-right: 0% !important;"
     
     ></v-img>
-    <v-toolbar-title class="ml-2">El Puebla</v-toolbar-title>
+    <v-toolbar-title  class="ml-2">El Puebla</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn variant="outlined"  @click="router.push('/clientes')" class="mx-2" >Clientes</v-btn>
-    <v-btn variant="outlined" @click="router.push('/ventas')" class="mx-2"> Ventas</v-btn>
-    <v-btn variant="outlined" @click="router.push('/totalVentas')" class="mx-2">Registro diario</v-btn>
-    <v-btn variant="outlined" @click="router.push('/busqueda')" class="mx-2">Busqueda</v-btn>
-    <v-btn variant="outlined" @click="router.push('/insertarVenta')" class="mx-2">Vender</v-btn>
+    <v-btn variant="flat" color="black" @click="router.push('/pagos')"  class="mx-2">Pagos</v-btn>
+    <v-btn variant="flat" color="black" @click="router.push('/ventas')" class="mx-2"> Ventas</v-btn>
+    <v-btn variant="flat" color="black"  @click="router.push('/clientes')" class="mx-2" >Clientes</v-btn>
+    <v-btn variant="flat" color="black"  @click="router.push('/productos')" class="mx-2" >Productos</v-btn>
+    <v-btn variant="flat" color="black" @click="router.push('/totalVentas')" class="mx-2">Registro diario</v-btn>
+    <v-btn variant="flat" color="black" @click="router.push('/busqueda')" class="mx-2">Busqueda</v-btn>
+    <v-btn variant="flat" color="black" @click="router.push('/insertarVenta')" class="mx-2">Vender</v-btn>
   </v-app-bar>
 </template>
 

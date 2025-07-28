@@ -1,103 +1,74 @@
 <template>
-  <v-container>
-    <v-card variant="outlined" elevation="4">
-      <v-card-title>
-        <v-row>
-          <v-col cols="6">
-            
-              <h2>Últimas compras</h2>
+  <v-container class="pa-0">
+    <v-card elevation="1" class="pa-4" >
+      <h2 class="text-h6 font-weight-bold mb-1">Últimas Compras</h2>
+      <p class="text-caption text-medium-emphasis mb-4">Historial reciente de transacciones</p>
 
-            
-          </v-col>
-          <v-col cols="6" align="right" />
-        </v-row>
-      </v-card-title>
-
-      <v-card-text v-if="historial">
-        <div style="overflow-x: auto; white-space: nowrap;">
-          <v-infinite-scroll
-            no-data-text="No hay Ventas"
-
-            direction="vertical"
-            :items="ventas"
-            @load="load"
-          >
-            <div class="d-flex flex-row" style="gap: 16px; padding: 8px;">
-              <template v-for="(item, index) in ventas" :key="item.id">
-                <div style="min-width: 300px; display: inline-block;">
-                  <v-card variant="outlined" class="bg-white" elevation="2">
-
-                    <v-row>
-                      <v-col cols="6" align="center" class="">
-                        <div class="pt-4">
-                          <v-row>
-                            <v-col cols="3" >
-                              <v-icon icon="mdi-calendar"></v-icon>
-
-                            </v-col>
-                            <v-col cols="9">
-                              <v-card-subtitle align="">
-                                {{ formatFechaLargaConSlash(item.created_at) }}
-                              </v-card-subtitle>
-
-                            </v-col>
-                          </v-row>
-                        </div>
-
-                      </v-col>
-                      <v-col cols="6" align="center"  >
-                        <div class="pt-1">
-                          <v-chip
-                          
-                          v-if="item.estatus === 'pendiente'"
-                          color="orange"
-                          text-color="white"
-                          class="ma-2"
-                        >
-                          {{ item.estatus }}
-                        </v-chip>
-                        <v-chip
-                          v-if="item.estatus === 'cobrado'"
-                          color="green"
-                          text-color="white"
-                          class="ma-2"
-                        >
-                          {{ item.estatus }}
-                        </v-chip>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <v-card-title>{{ (item.total) }}</v-card-title>
-                    
-                    <v-card-text>
-                      <v-row>
-                        <v-col cols="6" align-self="center">Estatus:</v-col>
-                        <v-col cols="6" align-self="center">
-                        
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn
-                        variant="flat"
-                        color="black"
-                        block
-                        @click="especifica(item.id)"
-                      >
-                        Detalles
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
+      <v-infinite-scroll
+        no-data-text="No hay ventas"
+        :has-more="hasMore"
+        direction="vertical"
+        :items="ventas"
+        @load="load"
+      >
+        <v-list density="compact" class="pa-0">
+          <template v-for="item in ventas" :key="item.id">
+            <v-list-item
+              class="rounded-lg mb-3 pa-3 d-flex align-center justify-space-between"
+              style="border: 1px solid #eee;"
+            >
+              <!-- Parte izquierda -->
+              <div class="d-flex align-center gap-3">
+                <v-avatar size="38" color="grey-lighten-3">
+                  <v-icon icon="mdi-receipt" color="primary" />
+                </v-avatar>
+                <div>
+                  <div class="text-subtitle-1 font-weight-bold">
+                    {{ formatCurrency(item.total) }}
+                  </div>
+                  <div class="text-caption text-medium-emphasis">
+                    {{ formatFechaLargaConSlash(item.created_at) }}
+                  </div>
                 </div>
-              </template>
-            </div>
-          </v-infinite-scroll>
-        </div>
-      </v-card-text>
+              </div>
 
-      <v-card-text v-else>
+              <!-- Parte derecha -->
+              <div class="d-flex align-center gap-2">
+                <v-chip
+                  size="small"
+                  :color="item.estatus === 'cobrado' ? 'green' : item.estatus === 'pendiente' ? 'orange' : 'blue'"
+                  text-color="white"
+                  label
+                >
+                  {{ item.estatus }}
+                </v-chip>
+                <v-btn
+                  size="small"
+                  variant="outlined"
+                  @click="especifica(item)"
+                >
+                  Detalles
+                </v-btn>
+              </div>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-infinite-scroll>
+
+      <v-btn
+        v-if="hasMore && ventas.length > 0"
+        block
+        variant="tonal"
+        color="primary"
+        class="mt-3"
+        @click="load({ done: () => {} })"
+      >
+        Ver Más Transacciones
+      </v-btn>
+
+      <div v-if="!ventas.length && historial" class="text-center text-medium-emphasis mt-4">
         Este cliente no tiene historial de compras
-      </v-card-text>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -109,7 +80,7 @@ import formatCurrency from '@/composables/formatCurrency'
 import useTime from '@/composables/datetime.js'
 import { router } from '@/router'
 
-const { getRelativeTime, formatFechaLargaConSlash, formatHoraCompleta } = useTime()
+const { formatFechaLargaConSlash } = useTime()
 
 const props = defineProps({
   id: {
@@ -118,19 +89,21 @@ const props = defineProps({
   }
 })
 
-const especifica = (id) => {
-  router.push({ name: 'ventaEspecifica', params: { id } })
-}
-
-const historial = ref(false)
 const ventas = ref([])
+const historial = ref(false)
+const hasMore = ref(true)
 
 const paginate = ref({
   page: 1,
   pageSize: 5
 })
 
-const load = async ({ side, done }) => {
+const especifica = (item) => {
+  const id = item.id
+  router.push({ name: 'ventaEspecifica', params: { id } })
+}
+
+const load = async ({ done }) => {
   try {
     const from = (paginate.value.page - 1) * paginate.value.pageSize
     const to = (paginate.value.page * paginate.value.pageSize) - 1
@@ -142,9 +115,7 @@ const load = async ({ side, done }) => {
         pagos (*),
         producto_ventas (
           *,
-          productos (
-            *
-          )
+          productos (*)
         )
       `)
       .eq('cliente_id', props.id)
@@ -154,20 +125,22 @@ const load = async ({ side, done }) => {
 
     if (error) {
       console.error('Error al obtener ventas:', error)
-      done('error')
+      return done('error')
+    }
+
+    if (!data || data.length === 0) {
+      hasMore.value = false
+      return done('empty')
+    }
+
+    ventas.value.push(...data)
+    historial.value = true
+    paginate.value.page++
+
+    if (data.length < paginate.value.pageSize) {
+      hasMore.value = false
+      done('empty')
     } else {
-      if (data.length === 0) {
-        done('empty')
-        return
-      }
-
-      ventas.value.push(...data.map(venta => ({
-        ...venta,
-        dialog: false
-      })))
-
-      historial.value = true
-      paginate.value.page++
       done('ok')
     }
   } catch (error) {
@@ -186,7 +159,9 @@ watch(() => props.id, (newId) => {
   if (newId) {
     ventas.value = []
     paginate.value.page = 1
-    historial.value = true
+    hasMore.value = true
+    historial.value = false
+    load({ done: () => {} })
   }
 })
 </script>

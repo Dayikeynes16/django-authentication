@@ -13,7 +13,8 @@ import clientes from './pages/clientes/clientes.vue'
 import clientesDetalles from './pages/clientes/clientesDetalles.vue'
 import ventaEspecifica from './pages/ventaEspecifica/ventaEspecificaFinal.vue'
 import busqueda from './pages/busquedas/main.vue'
-
+import productos from './pages/productos/productos.vue'
+import pagos from './pages/pagos/pagos.vue'
 
 const routes = [
   { path: '/', redirect: '/ventas' },  
@@ -27,6 +28,9 @@ const routes = [
   { path: '/clientesDetalles/:id', name: 'clientesDetalles' ,component: clientesDetalles, meta: { requiresAuth: false }}, 
   { path: '/ventaEspecifica/:id', name: 'ventaEspecifica' ,component: ventaEspecifica, meta: { requiresAuth: false }}, 
   { path: '/busqueda', name: 'busqueda' ,component: busqueda, meta: { requiresAuth: false }}, 
+  { path: '/productos', name: 'productos' ,component: productos, meta: { requiresAuth: false }}, 
+  {path: '/pagos', name: 'pagos', component: pagos, meta: { requiresAuth: false }},
+
 
 
 ]

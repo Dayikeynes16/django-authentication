@@ -1,48 +1,59 @@
 <template>
-    <v-container>
-        <v-card elevation="4" variant="outlined" class="bg-white">
-             <v-card-title>
-                <p class="h5">
-                    Información del cliente 
-                </p>
-            </v-card-title>
-            
-            <v-card-text>
-                <v-list variant="flat" class="bg-white">
-                    <v-list-item prepend-icon="mdi-account" class="bg-white">
-                        {{ cliente.nombre }}
-                    </v-list-item>
-                    <v-list-item prepend-icon="mdi-phone" class="bg-white">
-                        {{ cliente.telefono }}
-                    </v-list-item>
-                     <v-list-item prepend-icon="mdi-map-marker" class="bg-white">
-                        {{ cliente.direccion }}
-                    </v-list-item>
-                </v-list>
-            </v-card-text>
-        </v-card>
+  <v-card
+    elevation="1"
+    class="pa-4 rounded-lg"
+    style="background-color: white; border: 1px solid #e0e0e0;"
+  >
+    <div class="d-flex align-center gap-4 mb-4">
+      <v-avatar color="blue-lighten-4" size="48">
+        <span class="text-subtitle-2 font-weight-bold text-blue-darken-2">
+          {{ cliente.nombre?.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase() }}
+        </span>
+      </v-avatar>
+      <div>
+        <h2 class="text-subtitle-1 font-weight-bold mb-0">
+          {{ cliente.nombre }}
+        </h2>
+        <p class="text-caption text-medium-emphasis">Cliente Premium</p>
+      </div>
+    </div>
 
-    </v-container>
+    <v-divider class="mb-4" />
 
+    <v-list density="compact" class="pa-0">
+      <v-list-item class="px-0">
+        <template #prepend>
+          <v-icon icon="mdi-phone" class="me-2 text-grey-darken-1" />
+        </template>
+        <v-list-item-title class="text-body-2">{{ cliente.telefono || 'No especificado' }}</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item class="px-0">
+        <template #prepend>
+          <v-icon icon="mdi-map-marker" class="me-2 text-grey-darken-1" />
+        </template>
+        <v-list-item-title class="text-body-2">
+          {{ cliente.direccion || 'Dirección no especificada' }}
+        </v-list-item-title>
+      </v-list-item>
+
+      <v-list-item class="px-0">
+        <template #prepend>
+          <v-icon icon="mdi-calendar" class="me-2 text-grey-darken-1" />
+        </template>
+        <v-list-item-title class="text-body-2">
+          Cliente desde: {{ new Date(cliente.created_at).toLocaleDateString() }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-card>
 </template>
+
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
-import supabase from '@/supabase.js';
-
 const props = defineProps({
-    cliente: {
-        type: Object,
-        required: true
-    }
-})
-
-const cliente = computed(() => props.cliente)
-
-console.log(cliente.value);
-
-
-
-
-
-
+  cliente: {
+    type: Object,
+    required: true,
+  },
+});
 </script>

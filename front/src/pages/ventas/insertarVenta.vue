@@ -113,7 +113,12 @@
   import snackbar from '@/components/snackbar.vue'
   import { getMexicoLocalString } from '@/composables/localtime'
   import { insertarProductoVenta } from './insertarProductoVenta'
-  
+
+
+  const getMexicoTime = () => {
+    return new Date().toLocaleString("en-US", { timeZone: "America/Mexico_City" }).replace(",", "").replace("/", "-").replace("/", "-");
+  };
+
   // REFS PRINCIPALES
   const productos = ref([])
   const select = shallowRef(null)
@@ -200,7 +205,7 @@
     const { data, error } = await supabase
       .from('ventas')
       .insert({
-        created_at: getMexicoLocalString(),
+        created_at: getMexicoTime(),
         balanza: '0',
         total: parseFloat(get_total()),
         estatus: 'activo'

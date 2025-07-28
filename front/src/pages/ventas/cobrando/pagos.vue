@@ -180,7 +180,7 @@ const bill_sale = async () => {
         const { data, error } = await supabase
         .from('pagos')
         .insert([{
-             venta_id: props.venta.id, total: form.value.cantidad, metodo: form.value.metodo, pendiente: 0, created_at: getMexicoLocalString()}])
+             venta_id: props.venta.id, total: form.value.cantidad, metodo: form.value.metodo, created_at: getMexicoLocalString()}])
         .select()
         .single()
         if (error) {

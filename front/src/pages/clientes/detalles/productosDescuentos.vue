@@ -1,101 +1,105 @@
 <template>
-  <v-container>
-    <!-- Sin descuentos -->
-    <v-card v-if="!productos" variant="outlined" class="pa-5">
-      <v-card-title>Productos con descuento</v-card-title>
-      <v-card-text>
-        Este cliente no cuenta con productos con descuento.
-      </v-card-text>
-      <v-card-actions class="pt-0">
-        <v-btn
-          block
-          color="green"
-          variant="flat"
-          prepend-icon="mdi-tag"
-          @click="abrirDialog()"
-        >
-          Nuevo descuento
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+  <!-- Snackbar personalizado -->
+  <snackbar v-if="notificacion.show" :message="notificacion.message" :type="notificacion.type" :show="notificacion.show" />
 
-    <!-- Con descuentos -->
-    <v-card v-else variant="outlined" class="pa-5">
-      <v-card-title>Productos con descuento</v-card-title>
-      <v-card-text>
-        <v-row v-for="(producto, index) in productos" :key="index">
-          <v-card class="mx-2 my-2" width="100%" variant="outlined">
-            <v-card-title>
+  <!-- Sin descuentos -->
+  <v-card v-if="!productos" elevation="1" class="pa-2 rounded-lg">
+    <v-card-title>Productos con Descuento</v-card-title>
+    <v-card-text>
+      Este cliente no cuenta con productos con descuento.
+    </v-card-text>
+    <v-card-actions class="pt-0">
+      <v-btn
+        block
+        color="green"
+        variant="flat"
+        prepend-icon="mdi-tag"
+        @click="abrirDialog()"
+      >
+        Nuevo descuento
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+
+  <!-- Con descuentos -->
+  <v-card v-else variant="flat" elevation="1" class="pa-2">
+    <v-card-title>Productos con Descuento</v-card-title>
+    <v-card-text>
+      <v-row v-for="(producto, index) in productos" :key="index">
+        <v-col cols="12">
+          <v-card variant="flat" color="grey-lighten-2" class="pa-4 rounded-lg">
+            <!-- Nombre -->
+            <div class="text-subtitle-1 font-weight-bold mb-2">
               {{ producto.productos.nombre }}
-            </v-card-title>
-            <v-card-subtitle>
-              <v-row>
-                <v-col class="text-left" cols="6">Precio con descuento</v-col>
-                <v-col class="text-right" cols="6">Precio normal</v-col>
-              </v-row>
-            </v-card-subtitle>
-            <v-card-text>
-              <v-row>
-                <v-col class="text-left" cols="6">
-                  <strong>{{ formatCurrency(producto.precio) }}</strong>
-                </v-col>
-                <v-col class="text-right" cols="6">
-                  <strong>{{ formatCurrency(producto.productos.precio_de_venta) }}</strong>
-                </v-col>
-              </v-row>
-            </v-card-text>
-            <v-card-actions>
-              <v-row>
-                <v-col cols="6">
-                  <v-btn
-                    append-icon="mdi-delete"
-                    color="red"
-                    block
-                    variant="flat"
-                    @click="eliminarDescuento(producto.id)"
-                  >
-                    Eliminar
-                  </v-btn>
-                </v-col>
-                <v-col cols="6">
-                  <v-btn
-                    color="green"
-                    append-icon="mdi-pencil"
-                    block
-                    variant="flat"
-                    @click="abrirDialog(producto)"
-                  >
-                    Editar
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-card-actions>
-          </v-card>
-        </v-row>
-      </v-card-text>
-      <v-card-actions class="pt-0">
-        <v-btn
-          block
-          color="green"
-          variant="flat"
-          prepend-icon="mdi-tag"
-          @click="abrirDialog()"
-        >
-          Nuevo descuento
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+            </div>
 
-    <!-- Diálogo para crear/editar -->
-    <v-dialog v-model="dialog" max-width="500px">
-      <nuevoDescuento
-        :cliente_id="cliente.id"
-        :descuento="productoSeleccionado"
-        @cerrar="cerrarDialog"
-        @creado="handleCreado"
-      />
-    </v-dialog>
-  </v-container>
+            <!-- Precios -->
+            <v-row align="center" class="mb-2">
+              <v-col cols="4">
+                <div class="text-green-darken-2 font-weight-bold text-h6">
+                  {{ formatCurrency(producto.precio) }}
+                </div>
+              </v-col>
+              <v-col cols="4" class="text-grey text-decoration-line-through">
+                {{ formatCurrency(producto.productos.precio_de_venta) }}
+              </v-col>
+              <v-col cols="4" class="text-right">
+                <v-chip color="green" variant="flat" size="small">
+                  {{ calcularPorcentajeDescuento(producto) }}% OFF
+                </v-chip>
+              </v-col>
+            </v-row>
+
+            <!-- Acciones -->
+            <v-row dense>
+              <v-col cols="6">
+                <v-btn
+                  prepend-icon="mdi-delete"
+                  color="red"
+                  block
+                  variant="flat"
+                  @click="eliminarDescuento(producto.id)"
+                >
+                </v-btn>
+              </v-col>
+              <v-col cols="6">
+                <v-btn
+                  append-icon="mdi-pencil"
+                  color="green"
+                  block
+                  variant="flat"
+                  @click="abrirDialog(producto)"
+                >
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card-text>
+
+    <v-card-actions class="pt-0">
+      <v-btn
+        block
+        color="green"
+        variant="flat"
+        prepend-icon="mdi-tag"
+        @click="abrirDialog()"
+      >
+        Nuevo Descuento
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+
+  <!-- Diálogo para crear/editar -->
+  <v-dialog v-model="dialog" max-width="500px">
+    <nuevoDescuento
+      :cliente_id="cliente.id"
+      :descuento="productoSeleccionado"
+      @cerrar="cerrarDialog"
+      @creado="handleCreado"
+    />
+  </v-dialog>
 </template>
 
 <script setup>
@@ -103,22 +107,35 @@ import { ref } from 'vue'
 import supabase from '@/supabase'
 import formatCurrency from '@/composables/formatCurrency'
 import nuevoDescuento from '../nuevoDescuento.vue'
+import snackbar from '@/components/snackbar.vue' // importas el componente
 
 const props = defineProps({
-  productos: {
-    type: Array,
-    required: true
-  },
-  cliente: {
-    type: Object,
-    required: true
-  }
+  productos: Array,
+  cliente: Object
 })
 
 const emits = defineEmits(['creado'])
 
 const dialog = ref(false)
 const productoSeleccionado = ref(null)
+
+// Snackbar personalizado
+const notificacion = ref({
+  show: false,
+  message: '',
+  type: 'success'
+})
+
+const mostrarSnackbar = (msg, tipo = 'success') => {
+  notificacion.value.message = msg
+  notificacion.value.type = tipo
+  notificacion.value.show = true
+
+  // Ocultar después de timeout
+  setTimeout(() => {
+    snackbar.value.show = false
+  }, 3000)
+}
 
 const abrirDialog = (producto = null) => {
   productoSeleccionado.value = producto
@@ -143,10 +160,18 @@ const eliminarDescuento = async (id) => {
 
   if (error) {
     console.error('Error al eliminar descuento:', error)
-    alert('Error al eliminar el descuento.')
+    mostrarSnackbar('Error al eliminar el descuento.', 'error')
   } else {
-    alert('Descuento eliminado correctamente.')
+    mostrarSnackbar('Descuento eliminado correctamente.', 'success')
     emits('creado')
   }
+}
+
+// 👇 Calcula porcentaje de descuento
+const calcularPorcentajeDescuento = (producto) => {
+  const original = producto.productos.precio_de_venta
+  const descuento = producto.precio
+  const porcentaje = ((original - descuento) / original) * 100
+  return Math.round(porcentaje)
 }
 </script>

@@ -23,6 +23,7 @@ export const useVentas = () => {
         `)
         .gte('created_at', startOfDay)
         .lte('created_at', endOfDay)
+        .order('created_at', { ascending: false })
         .limit(5000)
 
       if (error) {
